@@ -1162,8 +1162,7 @@ namespace ACadSharp.IO.DWG
 
 		private void readCommonAttData(AttributeBase att)
 		{
-			//R2010+:
-			if (this.R2010Plus)
+			if (this.R2007Plus | this.R2004Plus)
 			{
 				//Version RC ?
 				att.Version = this._objectReader.ReadByte();
@@ -1173,10 +1172,19 @@ namespace ACadSharp.IO.DWG
 					att.Tag = this._textReader.ReadVariableText();
 				}
 			}
-
+			else if (this.R2010Plus)
+			{
+				//Version RC ?
+				att.Version = this._objectReader.ReadByte();
+				var type = this._objectReader.ReadByte();
+				if (type == 128)
+				{
+					att.Tag = this._textReader.ReadVariableText();
+				}
+			}
 
 			//R2018+:
-			if (this.R2018Plus)
+			else if (this.R2018Plus)
 			{
 				AttributeType type = (AttributeType)this._objectReader.ReadByte();
 
