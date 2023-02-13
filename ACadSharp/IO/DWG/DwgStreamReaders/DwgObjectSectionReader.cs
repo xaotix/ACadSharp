@@ -1164,13 +1164,7 @@ namespace ACadSharp.IO.DWG
 		{
 			if (this.R2007Plus | this.R2004Plus)
 			{
-				//Version RC ?
-				att.Version = this._objectReader.ReadByte();
-				var type = this._objectReader.ReadByte();
-				if(type == 128)
-				{
-					att.Tag = this._textReader.ReadVariableText();
-				}
+				att.Tag = this._textReader.ReadVariableText();
 			}
 			else if (this.R2010Plus)
 			{
