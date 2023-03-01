@@ -15,21 +15,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Version>1.4.1-alpha</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\DLLS\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+    <NoWarn>1701;1702;1705</NoWarn>
+  </PropertyGroup>
+
   <Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />
-
   <Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
-
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.5" Condition="'$(TargetFramework)' == 'net48'" />
