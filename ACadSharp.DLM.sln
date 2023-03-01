@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.33026.149
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACadSharp.DLM", "ACadSharp\ACadSharp.DLM.csproj", "{22E5AE3B-6CC8-4D5E-A822-E43D079B2A06}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Test|Any CPU = Test|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{22E5AE3B-6CC8-4D5E-A822-E43D079B2A06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22E5AE3B-6CC8-4D5E-A822-E43D079B2A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22E5AE3B-6CC8-4D5E-A822-E43D079B2A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22E5AE3B-6CC8-4D5E-A822-E43D079B2A06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22E5AE3B-6CC8-4D5E-A822-E43D079B2A06}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{22E5AE3B-6CC8-4D5E-A822-E43D079B2A06}.Test|Any CPU.Build.0 = Test|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1C50F075-EA19-46B3-8A32-44500D1CDE83}
+	EndGlobalSection
+EndGlobal
