@@ -1162,7 +1162,7 @@ namespace ACadSharp.IO.DWG
 
 		private void readCommonAttData(AttributeBase att)
 		{
-			if (this.R2007Plus | this.R2004Plus)
+			if (this.R2007Plus | this.R2004Plus | this.R2004Pre)
 			{
 				att.Tag = this._textReader.ReadVariableText();
 			}
