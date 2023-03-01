@@ -7,6 +7,7 @@ using CSMath;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ACadSharp.IO.DXF
 {
@@ -161,18 +162,26 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (e)
 			{
-				//TODO: Finish write implementation
 				case Hatch:
 				case MText:
-				case Insert:
-				case TextEntity:
 				case Dimension:
-				case LwPolyline:
 				case MLine:
-					this.Notify($"mapped object : {e.GetType().FullName} not implemented");
+					this.Notify($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
+#if TEST
+					throw new NotImplementedException($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
+#endif
+					return;
+				case Insert insert:
+					this.writeInsert(insert);
+					return;
+				case LwPolyline lwPolyline:
+					this.writeLwPolyline(lwPolyline);
 					return;
 				case Polyline polyline:
 					this.writePolyline(polyline);
+					return;
+				case TextEntity textEntity:
+					this.writeTextEntity(textEntity);
 					return;
 				default:
 					break;
@@ -246,6 +255,29 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(91, v.Id);
 		}
 
+		private void writeInsert(Insert insert)
+		{
+#if TEST
+			throw new NotImplementedException(insert.GetType().FullName);
+#endif
+		}
+
+		private void writeLwPolyline(LwPolyline polyline)
+		{
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap plineMap = DxfClassMap.Create<LwPolyline>();
+
+			this._writer.Write(DxfCode.Start, polyline.ObjectName);
+
+			this.writeCommonObjectData(polyline);
+
+			this.writeClassMap(entityMap, polyline);
+
+			this.writeClassMap(plineMap, polyline);
+
+			this.writeCollection(polyline.Vertices);
+		}
+
 		private void writePolyline(Polyline polyline)
 		{
 			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
@@ -269,7 +301,7 @@ namespace ACadSharp.IO.DXF
 
 			//Remove elevation
 			plineMap.DxfProperties.Remove(30);
-						
+
 			this.writeClassMap(plineMap, polyline);
 
 			this._writer.Write(DxfCode.XCoordinate, 0);
@@ -277,6 +309,41 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.ZCoordinate, polyline.Elevation);
 
 			this.writeCollection(polyline.Vertices);
+		}
+
+		private void writeTextEntity(TextEntity text)
+		{
+			DxfClassMap entityMap = DxfClassMap.Create<Entity>();
+			DxfClassMap textMap = DxfClassMap.Create<TextEntity>();
+
+			this._writer.Write(DxfCode.Start, text.ObjectName);
+
+			this.writeCommonObjectData(text);
+
+			this.writeClassMap(entityMap, text);
+
+			this.writeClassMap(textMap, text);
+
+			if (text is not AttributeBase)
+			{
+				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
+			}
+			else
+			{
+				DxfClassMap attMap = null;
+
+				switch (text)
+				{
+					case AttributeEntity:
+						attMap = DxfClassMap.Create<AttributeEntity>();
+						break;
+					case AttributeDefinition:
+						attMap = DxfClassMap.Create<AttributeDefinition>();
+						break;
+				}
+
+				this.writeClassMap(attMap, text);
+			}
 		}
 
 		private void writeVertex(Vertex v)
