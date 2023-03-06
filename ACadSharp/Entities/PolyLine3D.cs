@@ -31,7 +31,7 @@ namespace ACadSharp.Entities
 
 		private void verticesOnAdd(object sender, ReferenceChangedEventArgs e)
 		{
-			if (e.Current is not Vertex3D)
+			if (e.Current is Vertex3D == false)
 			{
 				this.Vertices.Remove((Vertex)e.Current);
 				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline3d}");

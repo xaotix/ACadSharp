@@ -24,25 +24,25 @@ namespace ACadSharp.IO.Templates
 					lw.Vertices.Add(new LwPolyline.Vertex(new CSMath.XY((double)value, 0)));
 					return true;
 				case 20:
-					if (last is not null)
+					if (last != null)
 					{
 						last.Location = new CSMath.XY(last.Location.X, (double)value);
 					}
 					return true;
 				case 40:
-					if (last is not null)
+					if (last != null)
 					{
 						last.StartWidth = (double)value;
 					}
 					return true;
 				case 41:
-					if (last is not null)
+					if (last !=  null)
 					{
 						last.EndWidth = (double)value;
 					}
 					return true;
 				case 42:
-					if (last is not null)
+					if (last != null)
 					{
 						last.Bulge = (double)value;
 					}

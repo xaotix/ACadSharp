@@ -372,45 +372,56 @@ namespace ACadSharp
 		internal void RegisterCollection<T>(IObservableCollection<T> collection, bool addElements = true)
 			where T : CadObject
 		{
-			switch (collection)
+
+			if (collection is AppIdsTable)
 			{
-				case AppIdsTable:
-					this.AppIds = (AppIdsTable)collection;
-					this.AppIds.Owner = this;
-					break;
-				case BlockRecordsTable:
-					this.BlockRecords = (BlockRecordsTable)collection;
-					this.BlockRecords.Owner = this;
-					break;
-				case DimensionStylesTable:
-					this.DimensionStyles = (DimensionStylesTable)collection;
-					this.DimensionStyles.Owner = this;
-					break;
-				case LayersTable:
-					this.Layers = (LayersTable)collection;
-					this.Layers.Owner = this;
-					break;
-				case LineTypesTable:
-					this.LineTypes = (LineTypesTable)collection;
-					this.LineTypes.Owner = this;
-					break;
-				case TextStylesTable:
-					this.TextStyles = (TextStylesTable)collection;
-					this.TextStyles.Owner = this;
-					break;
-				case UCSTable:
-					this.UCSs = (UCSTable)collection;
-					this.UCSs.Owner = this;
-					break;
-				case ViewsTable:
-					this.Views = (ViewsTable)collection;
-					this.Views.Owner = this;
-					break;
-				case VPortsTable:
-					this.VPorts = (VPortsTable)collection;
-					this.VPorts.Owner = this;
-					break;
+				this.AppIds = (AppIdsTable)collection;
+				this.AppIds.Owner = this;
+
 			}
+			else if (collection is BlockRecordsTable)
+			{
+				this.BlockRecords = (BlockRecordsTable)collection;
+				this.BlockRecords.Owner = this;
+
+			}
+			else if (collection is DimensionStylesTable)
+			{
+				this.DimensionStyles = (DimensionStylesTable)collection;
+				this.DimensionStyles.Owner = this;
+			}
+			else if (collection is LayersTable)
+			{
+				this.Layers = (LayersTable)collection;
+				this.Layers.Owner = this;
+			}
+			else if (collection is LineTypesTable)
+			{
+				this.LineTypes = (LineTypesTable)collection;
+				this.LineTypes.Owner = this;
+			}
+			else if (collection is TextStylesTable)
+			{
+				this.TextStyles = (TextStylesTable)collection;
+				this.TextStyles.Owner = this;
+			}
+			else if (collection is UCSTable)
+			{
+				this.UCSs = (UCSTable)collection;
+				this.UCSs.Owner = this;
+			}
+
+			else if (collection is ViewsTable)
+			{
+				this.Views = (ViewsTable)collection;
+				this.Views.Owner = this;
+			}
+			else if (collection is VPortsTable)
+			{
+				this.VPorts = (VPortsTable)collection;
+				this.VPorts.Owner = this;
+			}
+
 
 			collection.OnAdd += this.onAdd;
 			collection.OnRemove += this.onRemove;
@@ -444,19 +455,16 @@ namespace ACadSharp
 		internal void UnregisterCollection<T>(IObservableCollection<T> collection, bool removeElements = true)
 			where T : CadObject
 		{
-			switch (collection)
-			{
-				case AppIdsTable:
-				case BlockRecordsTable:
-				case DimensionStylesTable:
-				case LayersTable:
-				case LineTypesTable:
-				case TextStylesTable:
-				case UCSTable:
-				case ViewsTable:
-				case VPortsTable:
-					throw new InvalidOperationException($"The collection {collection.GetType()} cannot be removed from a document.");
-			}
+			if (collection is AppIdsTable
+				| collection is BlockRecordsTable
+				| collection is DimensionStylesTable
+				| collection is LayersTable
+				| collection is LineTypesTable
+				| collection is TextStylesTable
+				| collection is UCSTable
+				| collection is ViewsTable
+				| collection is VPortsTable)
+				throw new InvalidOperationException($"The collection {collection.GetType()} cannot be removed from a document.");
 
 			collection.OnAdd -= this.onAdd;
 			collection.OnRemove -= this.onRemove;

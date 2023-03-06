@@ -162,15 +162,15 @@ namespace ACadSharp.IO.DXF
 		{
 			switch (e)
 			{
-				case Hatch:
-				case MText:
-				case Dimension:
-				case MLine:
-					this.Notify($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
-#if TEST
-					throw new NotImplementedException($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
-#endif
-					return;
+				//				case Hatch:
+				//				case MText:
+				//				case Dimension:
+				//				case MLine:
+				//					this.Notify($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
+				//#if TEST
+				//					throw new NotImplementedException($"mapped object : {e.GetType().FullName} not implemented | handle: {e.Handle}");
+				//#endif
+				//					return;
 				case Insert insert:
 					this.writeInsert(insert);
 					return;
@@ -289,15 +289,10 @@ namespace ACadSharp.IO.DXF
 
 			this.writeClassMap(entityMap, polyline);
 
-			switch (polyline)
-			{
-				case Polyline2D:
-					plineMap = DxfClassMap.Create<Polyline2D>();
-					break;
-				case Polyline3D:
-					plineMap = DxfClassMap.Create<Polyline3D>();
-					break;
-			}
+			if (polyline is Polyline2D)
+				plineMap = DxfClassMap.Create<Polyline2D>();
+			else if (polyline is Polyline3D)
+				plineMap = DxfClassMap.Create<Polyline3D>();
 
 			//Remove elevation
 			plineMap.DxfProperties.Remove(30);
@@ -324,7 +319,7 @@ namespace ACadSharp.IO.DXF
 
 			this.writeClassMap(textMap, text);
 
-			if (text is not AttributeBase)
+			if (text is AttributeBase == false)
 			{
 				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Text);
 			}
@@ -332,14 +327,13 @@ namespace ACadSharp.IO.DXF
 			{
 				DxfClassMap attMap = null;
 
-				switch (text)
+				if (text is AttributeEntity)
 				{
-					case AttributeEntity:
-						attMap = DxfClassMap.Create<AttributeEntity>();
-						break;
-					case AttributeDefinition:
-						attMap = DxfClassMap.Create<AttributeDefinition>();
-						break;
+					attMap = DxfClassMap.Create<AttributeEntity>();
+				}
+				else if (text is AttributeDefinition)
+				{
+					attMap = DxfClassMap.Create<AttributeDefinition>();
 				}
 
 				this.writeClassMap(attMap, text);

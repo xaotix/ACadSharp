@@ -28,7 +28,11 @@ namespace ACadSharp.IO.DWG
 				this._handleMap.Add(item.Key, item.Value);
 			}
 #else
-			this._handleMap = new Dictionary<ulong, long>(map.OrderBy(o => o.Key));
+			this._handleMap = new Dictionary<ulong, long>();
+			foreach(var p in map.OrderBy(o => o.Key))
+			{
+				this._handleMap.Add(p.Key, p.Value);
+			}
 #endif
 		}
 
