@@ -173,6 +173,165 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+
+		/// <summary>
+		/// Read all the entities, tables and objects in the file.
+		/// </summary>
+		public void Read(ObjectType onlyType)
+		{
+			//Read each handle in the header
+			while (this._handles.Any())
+			{
+				ulong handle = this._handles.Dequeue();
+
+				//Check if the handle has already been read
+				if (!this._map.TryGetValue(handle, out long offset) ||
+					this._builder.TryGetObjectTemplate(handle, out CadTemplate _) ||
+					this._readedObjects.ContainsKey(handle))
+				{
+					continue;
+				}
+
+				//Get the object type
+				ObjectType type = this.getEntityType(offset);
+				//Save the object to avoid infinite loops while reading
+
+				switch (type)
+				{
+					case ObjectType.UNLISTED:
+					case ObjectType.INVALID:
+					case ObjectType.UNUSED:
+					case ObjectType.ATTRIB:
+					case ObjectType.ATTDEF:
+					case ObjectType.BLOCK:
+					case ObjectType.ENDBLK:
+					case ObjectType.SEQEND:
+					case ObjectType.INSERT:
+					case ObjectType.MINSERT:
+					case ObjectType.UNKNOW_9:
+					case ObjectType.VERTEX_2D:
+					case ObjectType.VERTEX_3D:
+					case ObjectType.VERTEX_MESH:
+					case ObjectType.VERTEX_PFACE:
+					case ObjectType.VERTEX_PFACE_FACE:
+					case ObjectType.POINT:
+					case ObjectType.FACE3D:
+					case ObjectType.POLYLINE_PFACE:
+					case ObjectType.POLYLINE_MESH:
+					case ObjectType.SOLID:
+					case ObjectType.DICTIONARY:
+					case ObjectType.BODY:
+					case ObjectType.BLOCK_HEADER:
+					case ObjectType.STYLE:
+					case ObjectType.TRACE:
+					case ObjectType.UNKNOW_37:
+					case ObjectType.UNKNOW_36:
+					case ObjectType.UNKNOW_3B:
+					case ObjectType.UNKNOW_3A:
+					case ObjectType.STYLE_CONTROL_OBJ:
+					case ObjectType.LTYPE_CONTROL_OBJ:
+					case ObjectType.LAYER:
+					case ObjectType.LAYER_CONTROL_OBJ:
+					case ObjectType.BLOCK_CONTROL_OBJ:
+					case ObjectType.TOLERANCE:
+					case ObjectType.VIEWPORT:
+					case ObjectType.LTYPE:
+					case ObjectType.VIEW_CONTROL_OBJ:
+					case ObjectType.VIEW:
+					case ObjectType.UCS_CONTROL_OBJ:
+					case ObjectType.UCS:
+					case ObjectType.VPORT_CONTROL_OBJ:
+					case ObjectType.VPORT:
+					case ObjectType.APPID_CONTROL_OBJ:
+					case ObjectType.APPID:
+					case ObjectType.DIMSTYLE_CONTROL_OBJ:
+					case ObjectType.DIMSTYLE:
+					case ObjectType.VP_ENT_HDR_CTRL_OBJ:
+					case ObjectType.VP_ENT_HDR:
+					case ObjectType.GROUP:
+					case ObjectType.MLINESTYLE:
+					case ObjectType.OLE2FRAME:
+					case ObjectType.DUMMY:
+					case ObjectType.LONG_TRANSACTION:
+					case ObjectType.XRECORD:
+					case ObjectType.ACDBPLACEHOLDER:
+					case ObjectType.VBA_PROJECT:
+					case ObjectType.LAYOUT:
+					case ObjectType.ACAD_PROXY_ENTITY:
+					case ObjectType.ACAD_PROXY_OBJECT:
+						break;
+					case ObjectType.SPLINE:
+					case ObjectType.HATCH:
+					case ObjectType.SHAPE:
+					case ObjectType.TEXT:
+					case ObjectType.LWPOLYLINE:
+					case ObjectType.REGION:
+					case ObjectType.ARC:
+					case ObjectType.POLYLINE_2D:
+					case ObjectType.SOLID3D:
+					case ObjectType.DIMENSION_ORDINATE:
+					case ObjectType.DIMENSION_LINEAR:
+					case ObjectType.DIMENSION_ALIGNED:
+					case ObjectType.DIMENSION_ANG_3_Pt:
+					case ObjectType.DIMENSION_ANG_2_Ln:
+					case ObjectType.DIMENSION_RADIUS:
+					case ObjectType.DIMENSION_DIAMETER:
+					case ObjectType.ELLIPSE:
+					case ObjectType.RAY:
+					case ObjectType.LINE:
+					case ObjectType.CIRCLE:
+					case ObjectType.XLINE:
+					case ObjectType.POLYLINE_3D:
+					case ObjectType.OLEFRAME:
+					case ObjectType.MTEXT:
+					case ObjectType.LEADER:
+					case ObjectType.MLINE:
+
+						if (type != onlyType)
+						{
+							continue;
+						}
+						break;
+				}
+
+				
+
+				_readedObjects.Add(handle, type);
+
+			
+
+				CadTemplate template = null;
+
+				try
+				{
+					//Read the object
+					template = this.readObject(type);
+				}
+				catch (Exception ex)
+				{
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					this._builder.Notify($"Could not read {type} with handle: {handle}", NotificationType.Error, ex);
+					continue;
+				}
+
+				//Add the template to the list to be processed
+				if (template == null)
+				{
+
+				}
+				else if (template is ICadTableTemplate tableTemplate)
+				{
+					this._builder.AddTableTemplate(tableTemplate);
+				}
+				else
+				{
+					this._builder.AddTemplate(template);
+				}
+			}
+		}
+
 		private ObjectType getEntityType(long offset)
 		{
 			ObjectType type = ObjectType.INVALID;
